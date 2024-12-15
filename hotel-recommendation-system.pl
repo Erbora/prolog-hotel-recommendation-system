@@ -5,29 +5,29 @@
 
 :- discontiguous hotel/5.
 
-hotel('Hotel California', 5, 150, [wifi, breakfast, gym, pool], 'Los Angeles').
-hotel('Sunset Inn', 3, 90, [wifi, breakfast], 'San Francisco').
-hotel('Mountain Lodge', 4, 120, [wifi, breakfast, gym], 'Mountain View').
-hotel('Budget Stay', 2, 50, [wifi], 'San Diego').
-hotel('Seaside Retreat', 4, 200, [wifi, breakfast, gym, pool, spa], 'Miami').
-hotel('Urban Oasis', 3, 80, [wifi, breakfast, gym], 'New York').
-hotel('Country Comfort', 3, 75, [wifi, breakfast, pet_friendly], 'Austin').
-hotel('Luxury Palace', 5, 300, [wifi, breakfast, gym, spa, pool, valet_parking], 'Las Vegas').
-hotel('Green Valley', 4, 110, [wifi, breakfast, parking, gym], 'Denver').
-hotel('City Lights', 3, 95, [wifi, breakfast, parking], 'Chicago').
+hotel('Hotel Alexandar Square', 5, 150, [wifi, breakfast, gym, pool], 'Skopje').
+hotel('Hotel Arka', 4, 120, [wifi, breakfast, gym, pool], 'Skopje').
+hotel('Hotel Lirak', 4, 100, [wifi, breakfast, gym], 'Tetovo').
+hotel('Hotel Emka', 3, 90, [wifi, breakfast], 'Tetovo').
+hotel('Hotel Solun', 5, 200, [wifi, breakfast, gym, pool, spa], 'Skopje').
+hotel('Hotel City Park', 3, 80, [wifi, breakfast, gym], 'Skopje').
+hotel('Hotel Kitka', 3, 75, [wifi, breakfast, pet_friendly], 'Tetovo').
+hotel('Hotel Stone Bridge', 5, 300, [wifi, breakfast, gym, spa, pool, valet_parking], 'Skopje').
+hotel('Hotel Square', 4, 110, [wifi, breakfast, parking, gym], 'Skopje').
+hotel('Hotel View Inn', 3, 95, [wifi, breakfast, parking], 'Skopje').
 
 % Distance from point of interest (e.g., city center) in km
 % distance(Hotel, Distance).
-distance('Hotel California', 5).
-distance('Sunset Inn', 2).
-distance('Mountain Lodge', 15).
-distance('Budget Stay', 20).
-distance('Seaside Retreat', 8).
-distance('Urban Oasis', 3).
-distance('Country Comfort', 12).
-distance('Luxury Palace', 1).
-distance('Green Valley', 10).
-distance('City Lights', 4).
+distance('Hotel Alexandar Square', 1).
+distance('Hotel Arka', 1.5).
+distance('Hotel Lirak', 0.5).
+distance('Hotel Emka', 2).
+distance('Hotel Solun', 1).
+distance('Hotel City Park', 2).
+distance('Hotel Kitka', 1).
+distance('Hotel Stone Bridge', 0.3).
+distance('Hotel Square', 1.5).
+distance('Hotel View Inn', 2).
 
 % Defining Relations by Rules
 % Rule to find hotels based on star rating, price, required amenities, and location.
@@ -60,16 +60,16 @@ recommend_hotel_universal(StarRating, MaxPrice, RequiredAmenities, Location, Hot
 
 % User Ratings and Reviews
 % user_rating(Hotel, Rating).
-user_rating('Hotel California', 4.5).
-user_rating('Sunset Inn', 3.8).
-user_rating('Mountain Lodge', 4.2).
-user_rating('Budget Stay', 2.5).
-user_rating('Seaside Retreat', 4.7).
-user_rating('Urban Oasis', 4.0).
-user_rating('Country Comfort', 3.9).
-user_rating('Luxury Palace', 4.9).
-user_rating('Green Valley', 4.1).
-user_rating('City Lights', 3.6).
+user_rating('Hotel Alexandar Square', 4.5).
+user_rating('Hotel Arka', 4.2).
+user_rating('Hotel Lirak', 4.3).
+user_rating('Hotel Emka', 3.8).
+user_rating('Hotel Solun', 4.7).
+user_rating('Hotel City Park', 4.0).
+user_rating('Hotel Kitka', 3.9).
+user_rating('Hotel Stone Bridge', 4.9).
+user_rating('Hotel Square', 4.1).
+user_rating('Hotel View Inn', 3.6).
 
 % Rule to find hotels based on star rating, price, required amenities, location, and minimum user rating.
 % Input: StarRating (minimum), MaxPrice, RequiredAmenities (list), Location, MinRating, Output: Hotel
@@ -83,10 +83,10 @@ recommend_hotel_with_rating(StarRating, MaxPrice, RequiredAmenities, Location, M
 
 % Seasonal Price Variation
 % seasonal_price(Hotel, Season, Price).
-seasonal_price('Hotel California', winter, 120).
-seasonal_price('Hotel California', summer, 180).
-seasonal_price('Seaside Retreat', winter, 180).
-seasonal_price('Seaside Retreat', summer, 220).
+seasonal_price('Hotel Alexandar Square', winter, 120).
+seasonal_price('Hotel Alexandar Square', summer, 180).
+seasonal_price('Hotel Solun', winter, 180).
+seasonal_price('Hotel Solun', summer, 220).
 
 % Rule to recommend hotels based on seasonal price.
 % Input: StarRating (minimum), Season, MaxPrice, RequiredAmenities (list), Location, Output: Hotel
@@ -117,15 +117,15 @@ recommend_advanced(StarRating, MaxPrice, RequiredAmenities, Location, MinRating,
 
 % Hotel Categories
 % category(Hotel, Category).
-category('Hotel California', luxury).
-category('Sunset Inn', mid_range).
-category('Budget Stay', budget).
-category('Seaside Retreat', luxury).
-category('Urban Oasis', mid_range).
-category('Country Comfort', mid_range).
-category('Luxury Palace', luxury).
-category('Green Valley', mid_range).
-category('City Lights', mid_range).
+category('Hotel Alexandar Square', luxury).
+category('Hotel Arka', mid_range).
+category('Hotel Emka', mid_range).
+category('Hotel Solun', luxury).
+category('Hotel City Park', mid_range).
+category('Hotel Kitka', mid_range).
+category('Hotel Stone Bridge', luxury).
+category('Hotel Square', mid_range).
+category('Hotel View Inn', mid_range).
 
 % Rule for filtering hotels by category.
 % Input: Category, Output: Hotel
@@ -139,17 +139,20 @@ amenities_score(Hotel, Score) :-
     hotel(Hotel, _, _, Amenities, _),
     length(Amenities, Score).
 
+:- dynamic room_availability/2.
+
 % Room Availability and Booking System
 % room_availability(Hotel, Rooms).
-room_availability('Hotel California', 10).
-room_availability('Sunset Inn', 5).
-room_availability('Budget Stay', 0).
-room_availability('Seaside Retreat', 3).
-room_availability('Urban Oasis', 7).
-room_availability('Country Comfort', 2).
-room_availability('Luxury Palace', 4).
-room_availability('Green Valley', 8).
-room_availability('City Lights', 6).
+room_availability('Hotel Alexandar Square', 10).
+room_availability('Hotel Arka', 5).
+room_availability('Hotel Lirak', 3).
+room_availability('Hotel Emka', 4).
+room_availability('Hotel Solun', 3).
+room_availability('Hotel City Park', 7).
+room_availability('Hotel Kitka', 2).
+room_availability('Hotel Stone Bridge', 4).
+room_availability('Hotel Square', 8).
+room_availability('Hotel View Inn', 6).
 
 % Rule to check room availability.
 % Input: Hotel, Output: Availability (true/false)
@@ -176,32 +179,32 @@ dynamic_price(Hotel, Season, AdjustedPrice) :-
 
 % Sample Queries
 % Queries to find hotels based on different criteria.
-% ?- recommend_hotel(3, 100, [wifi, breakfast], 'San Francisco', Hotel).
-% This query will return hotels in San Francisco that have at least a 3-star rating, cost under $100, and provide both wifi and breakfast.
+% ?- recommend_hotel(3, 100, [wifi, breakfast], 'Skopje', Hotel).
+% This query will return hotels in Skopje that have at least a 3-star rating, cost under $100, and provide both wifi and breakfast.
 
-% ?- recommend_hotel_with_rating(4, 150, [gym, breakfast], 'Mountain View', 4.0, Hotel).
-% This query will return hotels in Mountain View that have at least a 4-star rating, cost under $150, provide both a gym and breakfast, and have a user rating of at least 4.0.
+% ?- recommend_hotel_with_rating(4, 150, [gym, breakfast], 'Tetovo', 4.0, Hotel).
+% This query will return hotels in Tetovo that have at least a 4-star rating, cost under $150, provide both a gym and breakfast, and have a user rating of at least 4.0.
 
-% ?- recommend_hotel_seasonal(4, winter, 130, [wifi, breakfast], 'Los Angeles', Hotel).
-% This query will return hotels in Los Angeles that have at least a 4-star rating, a seasonal price under $130 in winter, and provide both wifi and breakfast.
+% ?- recommend_hotel_seasonal(4, winter, 130, [wifi, breakfast], 'Skopje', Hotel).
+% This query will return hotels in Skopje that have at least a 4-star rating, a seasonal price under $130 in winter, and provide both wifi and breakfast.
 
-% ?- recommend_hotel_by_distance(10, Hotel).
-% This query will return hotels that are within 10 km of the city center.
+% ?- recommend_hotel_by_distance(2, Hotel).
+% This query will return hotels that are within 2 km of the city center.
 
-% ?- recommend_advanced(4, 200, [wifi, breakfast], 'Mountain View', 4.0, 10, Hotel).
+% ?- recommend_advanced(4, 200, [wifi, breakfast], 'Tetovo', 4.0, 10, Hotel).
 % This query will return hotels that meet all given criteria including distance.
 
 % ?- recommend_by_category(luxury, Hotel).
 % This query will return all luxury hotels.
 
-% ?- amenities_score('Hotel California', Score).
-% This query will return the amenities score for 'Hotel California'.
+% ?- amenities_score('Hotel Alexandar Square', Score).
+% This query will return the amenities score for 'Hotel Alexandar Square'.
 
-% ?- is_room_available('Hotel California').
-% This query will check if rooms are available at 'Hotel California'.
+% ?- is_room_available('Hotel Alexandar Square').
+% This query will check if rooms are available at 'Hotel Alexandar Square'.
 
-% ?- book_room('Hotel California').
-% This query will book a room at 'Hotel California' if available.
+% ?- book_room('Hotel Alexandar Square').
+% This query will book a room at 'Hotel Alexandar Square' if available.
 
-% ?- dynamic_price('Hotel California', summer, Price).
-% This query will return the dynamic price for 'Hotel California' during the summer based on room availability.
+% ?- dynamic_price('Hotel Alexandar Square', summer, Price).
+% This query will return the dynamic price for 'Hotel Alexandar Square' during the summer based on room availability.
