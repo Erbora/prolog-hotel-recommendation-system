@@ -36,7 +36,11 @@ recommend_hotel(StarRating, MaxPrice, RequiredAmenities, Location, Hotel) :-
     hotel(Hotel, HotelStarRating, Price, Amenities, Location),
     HotelStarRating >= StarRating,
     Price =< MaxPrice,
-    subset(RequiredAmenities, Amenities).
+    subset(RequiredAmenities, Amenities),
+    format('Recommended Hotel: ~w (Star Rating: ~w, Price: $~w)', [Hotel, HotelStarRating, Price]),
+    !.
+recommend_hotel(_, _, _, _, _) :-
+    write('No hotels found matching the given criteria.'), nl, fail.
 
 % Helper predicate to check if all elements of one list are in another.
 % Recursive Rules
@@ -79,7 +83,11 @@ recommend_hotel_with_rating(StarRating, MaxPrice, RequiredAmenities, Location, M
     HotelStarRating >= StarRating,
     Price =< MaxPrice,
     Rating >= MinRating,
-    subset(RequiredAmenities, Amenities).
+    subset(RequiredAmenities, Amenities),
+    format('Recommended Hotel: ~w (Star Rating: ~w, Price: $~w, User Rating: ~w)', [Hotel, HotelStarRating, Price, Rating]),
+    !.
+recommend_hotel_with_rating(_, _, _, _, _, _) :-
+    write('No hotels found matching the given criteria and rating.'), nl, fail.
 
 % Seasonal Price Variation
 % seasonal_price(Hotel, Season, Price).
@@ -95,13 +103,21 @@ recommend_hotel_seasonal(StarRating, Season, MaxPrice, RequiredAmenities, Locati
     hotel(Hotel, HotelStarRating, _, Amenities, Location),
     HotelStarRating >= StarRating,
     Price =< MaxPrice,
-    subset(RequiredAmenities, Amenities).
+    subset(RequiredAmenities, Amenities),
+    format('Recommended Hotel: ~w (Star Rating: ~w, Seasonal Price: $~w, Season: ~w)', [Hotel, HotelStarRating, Price, Season]),
+    !.
+recommend_hotel_seasonal(_, _, _, _, _, _) :-
+    write('No hotels found matching the seasonal price and criteria.'), nl, fail.
 
 % Rule to recommend hotels based on distance from a point of interest.
 % Input: MaxDistance, Output: Hotel
 recommend_hotel_by_distance(MaxDistance, Hotel) :-
     distance(Hotel, Distance),
-    Distance =< MaxDistance.
+    Distance =< MaxDistance,
+    format('Hotel within Distance: ~w (~w km)', [Hotel, Distance]),
+    !.
+recommend_hotel_by_distance(_) :-
+    write('No hotels found within the specified distance.'), nl, fail.
 
 % Advanced recommendation with combined criteria (star rating, price, amenities, location, rating, distance).
 % Input: StarRating (minimum), MaxPrice, RequiredAmenities (list), Location, MinRating, MaxDistance, Output: Hotel
@@ -113,7 +129,12 @@ recommend_advanced(StarRating, MaxPrice, RequiredAmenities, Location, MinRating,
     Price =< MaxPrice,
     Rating >= MinRating,
     Distance =< MaxDistance,
-    subset(RequiredAmenities, Amenities).
+    subset(RequiredAmenities, Amenities),
+    format('Recommended Hotel: ~w (Star Rating: ~w, Price: $~w, User Rating: ~w, Distance: ~w km)', 
+           [Hotel, HotelStarRating, Price, Rating, Distance]),
+    !.
+recommend_advanced(_, _, _, _, _, _, _) :-
+    write('No hotels found meeting all advanced criteria.'), nl, fail.
 
 % Hotel Categories
 % category(Hotel, Category).
@@ -130,7 +151,11 @@ category('Hotel View Inn', mid_range).
 % Rule for filtering hotels by category.
 % Input: Category, Output: Hotel
 recommend_by_category(Category, Hotel) :-
-    category(Hotel, Category).
+    category(Hotel, Category),
+    format('Hotel in Category ~w: ~w', [Category, Hotel]),
+    !.
+recommend_by_category(_) :-
+    write('No hotels found for the specified category.'), nl, fail.
 
 % Amenities Scoring System
 % Score hotels based on the number of amenities provided.
@@ -159,11 +184,11 @@ room_availability('Hotel View Inn', 6).
 is_room_available(Hotel) :-
     room_availability(Hotel, Rooms),
     Rooms > 0,
-    format('Rooms are available at ~w. (~w rooms left)', [Hotel, Rooms]).
+    format('Rooms are available at ~w. (~w rooms left)', [Hotel, Rooms]),
+    !.
 is_room_available(Hotel) :-
-    room_availability(Hotel, Rooms),
-    Rooms =< 0,
     format('Sorry, there are no rooms available at ~w.', [Hotel]), nl, fail.
+
 
 % Rule to book a room.
 % Input: Hotel, Output: Updated Room Availability
@@ -173,11 +198,11 @@ book_room(Hotel) :-
     NewRooms is Rooms - 1,
     retract(room_availability(Hotel, Rooms)),
     assert(room_availability(Hotel, NewRooms)),
-    format('Room successfully booked at ~w. (~w rooms remaining)', [Hotel, NewRooms]).
+    format('Room successfully booked at ~w. (~w rooms remaining)', [Hotel, NewRooms]),
+    !.
 book_room(Hotel) :-
-    room_availability(Hotel, Rooms),
-    Rooms =< 0,
     format('Booking failed: No rooms left at ~w.', [Hotel]), nl, fail.
+
 
 % Dynamic Pricing Based on Demand
 % Adjust price based on room availability.
@@ -186,10 +211,12 @@ dynamic_price(Hotel, Season, AdjustedPrice) :-
     seasonal_price(Hotel, Season, BasePrice),
     room_availability(Hotel, Rooms),
     (Rooms < 5 -> AdjustedPrice is BasePrice * 1.5 ; AdjustedPrice is BasePrice),
-    format('The dynamic price for ~w in ~w season is $~2f.', [Hotel, Season, AdjustedPrice]).
+    format('The dynamic price for ~w in ~w season is $~2f.', [Hotel, Season, AdjustedPrice]),
+    !.
 dynamic_price(Hotel, Season, _) :-
     \+ seasonal_price(Hotel, Season, _),
     format('No seasonal price information available for ~w in ~w season.', [Hotel, Season]), nl, fail.
+
 
 % Sample Queries
 % ?- recommend_hotel(3, 100, [wifi, breakfast], 'Skopje', Hotel).
