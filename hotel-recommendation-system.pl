@@ -158,7 +158,12 @@ room_availability('Hotel View Inn', 6).
 % Input: Hotel, Output: Availability (true/false)
 is_room_available(Hotel) :-
     room_availability(Hotel, Rooms),
-    Rooms > 0.
+    Rooms > 0,
+    format('Rooms are available at ~w. (~w rooms left)', [Hotel, Rooms]).
+is_room_available(Hotel) :-
+    room_availability(Hotel, Rooms),
+    Rooms =< 0,
+    format('Sorry, there are no rooms available at ~w.', [Hotel]), nl, fail.
 
 % Rule to book a room.
 % Input: Hotel, Output: Updated Room Availability
@@ -167,7 +172,12 @@ book_room(Hotel) :-
     Rooms > 0,
     NewRooms is Rooms - 1,
     retract(room_availability(Hotel, Rooms)),
-    assert(room_availability(Hotel, NewRooms)).
+    assert(room_availability(Hotel, NewRooms)),
+    format('Room successfully booked at ~w. (~w rooms remaining)', [Hotel, NewRooms]).
+book_room(Hotel) :-
+    room_availability(Hotel, Rooms),
+    Rooms =< 0,
+    format('Booking failed: No rooms left at ~w.', [Hotel]), nl, fail.
 
 % Dynamic Pricing Based on Demand
 % Adjust price based on room availability.
@@ -175,36 +185,29 @@ book_room(Hotel) :-
 dynamic_price(Hotel, Season, AdjustedPrice) :-
     seasonal_price(Hotel, Season, BasePrice),
     room_availability(Hotel, Rooms),
-    (Rooms < 5 -> AdjustedPrice is BasePrice * 1.5 ; AdjustedPrice is BasePrice).
+    (Rooms < 5 -> AdjustedPrice is BasePrice * 1.5 ; AdjustedPrice is BasePrice),
+    format('The dynamic price for ~w in ~w season is $~2f.', [Hotel, Season, AdjustedPrice]).
+dynamic_price(Hotel, Season, _) :-
+    \+ seasonal_price(Hotel, Season, _),
+    format('No seasonal price information available for ~w in ~w season.', [Hotel, Season]), nl, fail.
 
 % Sample Queries
-% Queries to find hotels based on different criteria.
 % ?- recommend_hotel(3, 100, [wifi, breakfast], 'Skopje', Hotel).
-% This query will return hotels in Skopje that have at least a 3-star rating, cost under $100, and provide both wifi and breakfast.
 
 % ?- recommend_hotel_with_rating(4, 150, [gym, breakfast], 'Tetovo', 4.0, Hotel).
-% This query will return hotels in Tetovo that have at least a 4-star rating, cost under $150, provide both a gym and breakfast, and have a user rating of at least 4.0.
 
 % ?- recommend_hotel_seasonal(4, winter, 130, [wifi, breakfast], 'Skopje', Hotel).
-% This query will return hotels in Skopje that have at least a 4-star rating, a seasonal price under $130 in winter, and provide both wifi and breakfast.
 
 % ?- recommend_hotel_by_distance(2, Hotel).
-% This query will return hotels that are within 2 km of the city center.
 
 % ?- recommend_advanced(4, 200, [wifi, breakfast], 'Tetovo', 4.0, 10, Hotel).
-% This query will return hotels that meet all given criteria including distance.
 
 % ?- recommend_by_category(luxury, Hotel).
-% This query will return all luxury hotels.
 
 % ?- amenities_score('Hotel Alexandar Square', Score).
-% This query will return the amenities score for 'Hotel Alexandar Square'.
 
 % ?- is_room_available('Hotel Alexandar Square').
-% This query will check if rooms are available at 'Hotel Alexandar Square'.
 
 % ?- book_room('Hotel Alexandar Square').
-% This query will book a room at 'Hotel Alexandar Square' if available.
 
 % ?- dynamic_price('Hotel Alexandar Square', summer, Price).
-% This query will return the dynamic price for 'Hotel Alexandar Square' during the summer based on room availability.
