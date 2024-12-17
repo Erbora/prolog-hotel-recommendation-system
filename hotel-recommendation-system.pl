@@ -32,15 +32,14 @@ distance('Hotel View Inn', 2).
 % Defining Relations by Rules
 % Rule to find hotels based on star rating, price, required amenities, and location.
 % Input: StarRating (minimum), MaxPrice, RequiredAmenities (list), Location, Output: Hotel
-recommend_hotel(StarRating, MaxPrice, RequiredAmenities, Location, Hotel) :-
+recommend_all_hotels(StarRating, MaxPrice, RequiredAmenities, Location) :-
     hotel(Hotel, HotelStarRating, Price, Amenities, Location),
     HotelStarRating >= StarRating,
     Price =< MaxPrice,
     subset(RequiredAmenities, Amenities),
-    format('Recommended Hotel: ~w (Star Rating: ~w, Price: $~w)', [Hotel, HotelStarRating, Price]),
-    !.
-recommend_hotel(_, _, _, _, _) :-
-    write('No hotels found matching the given criteria.'), nl, fail.
+    format('Recommended Hotel: ~w (Star Rating: ~w, Price: $~w)', [Hotel, HotelStarRating, Price]), nl,
+    fail.
+recommend_all_hotels(_, _, _, _) :- write('End of recommendations.').
 
 % Helper predicate to check if all elements of one list are in another.
 % Recursive Rules
@@ -77,17 +76,18 @@ user_rating('Hotel View Inn', 3.6).
 
 % Rule to find hotels based on star rating, price, required amenities, location, and minimum user rating.
 % Input: StarRating (minimum), MaxPrice, RequiredAmenities (list), Location, MinRating, Output: Hotel
-recommend_hotel_with_rating(StarRating, MaxPrice, RequiredAmenities, Location, MinRating, Hotel) :-
+recommend_hotel_with_rating(StarRating, MaxPrice, RequiredAmenities, Location, MinRating) :-
     hotel(Hotel, HotelStarRating, Price, Amenities, Location),
     user_rating(Hotel, Rating),
     HotelStarRating >= StarRating,
     Price =< MaxPrice,
     Rating >= MinRating,
     subset(RequiredAmenities, Amenities),
-    format('Recommended Hotel: ~w (Star Rating: ~w, Price: $~w, User Rating: ~w)', [Hotel, HotelStarRating, Price, Rating]),
-    !.
-recommend_hotel_with_rating(_, _, _, _, _, _) :-
-    write('No hotels found matching the given criteria and rating.'), nl, fail.
+    format('Recommended Hotel: ~w (Star Rating: ~w, Price: $~w, User Rating: ~w)', [Hotel, HotelStarRating, Price, Rating]), nl,
+    fail.
+recommend_hotel_with_rating(_, _, _, _, _) :-
+    write('End of recommendations.'), nl.
+
 
 % Seasonal Price Variation
 % seasonal_price(Hotel, Season, Price).
@@ -98,30 +98,30 @@ seasonal_price('Hotel Solun', summer, 220).
 
 % Rule to recommend hotels based on seasonal price.
 % Input: StarRating (minimum), Season, MaxPrice, RequiredAmenities (list), Location, Output: Hotel
-recommend_hotel_seasonal(StarRating, Season, MaxPrice, RequiredAmenities, Location, Hotel) :-
+recommend_hotel_seasonal(StarRating, Season, MaxPrice, RequiredAmenities, Location) :-
     seasonal_price(Hotel, Season, Price),
     hotel(Hotel, HotelStarRating, _, Amenities, Location),
     HotelStarRating >= StarRating,
     Price =< MaxPrice,
     subset(RequiredAmenities, Amenities),
-    format('Recommended Hotel: ~w (Star Rating: ~w, Seasonal Price: $~w, Season: ~w)', [Hotel, HotelStarRating, Price, Season]),
-    !.
-recommend_hotel_seasonal(_, _, _, _, _, _) :-
-    write('No hotels found matching the seasonal price and criteria.'), nl, fail.
+    format('Recommended Hotel: ~w (Star Rating: ~w, Seasonal Price: $~w, Season: ~w)', [Hotel, HotelStarRating, Price, Season]), nl,
+    fail.
+recommend_hotel_seasonal(_, _, _, _, _) :-
+    write('End of recommendations.'), nl.
 
 % Rule to recommend hotels based on distance from a point of interest.
 % Input: MaxDistance, Output: Hotel
-recommend_hotel_by_distance(MaxDistance, Hotel) :-
+recommend_hotel_by_distance(MaxDistance) :-
     distance(Hotel, Distance),
     Distance =< MaxDistance,
-    format('Hotel within Distance: ~w (~w km)', [Hotel, Distance]),
-    !.
+    format('Hotel within Distance: ~w (~w km)', [Hotel, Distance]), nl,
+    fail.
 recommend_hotel_by_distance(_) :-
-    write('No hotels found within the specified distance.'), nl, fail.
+    write('End of recommendations.'), nl.
 
 % Advanced recommendation with combined criteria (star rating, price, amenities, location, rating, distance).
 % Input: StarRating (minimum), MaxPrice, RequiredAmenities (list), Location, MinRating, MaxDistance, Output: Hotel
-recommend_advanced(StarRating, MaxPrice, RequiredAmenities, Location, MinRating, MaxDistance, Hotel) :-
+recommend_advanced(StarRating, MaxPrice, RequiredAmenities, Location, MinRating, MaxDistance) :-
     hotel(Hotel, HotelStarRating, Price, Amenities, Location),
     user_rating(Hotel, Rating),
     distance(Hotel, Distance),
@@ -131,10 +131,10 @@ recommend_advanced(StarRating, MaxPrice, RequiredAmenities, Location, MinRating,
     Distance =< MaxDistance,
     subset(RequiredAmenities, Amenities),
     format('Recommended Hotel: ~w (Star Rating: ~w, Price: $~w, User Rating: ~w, Distance: ~w km)', 
-           [Hotel, HotelStarRating, Price, Rating, Distance]),
-    !.
-recommend_advanced(_, _, _, _, _, _, _) :-
-    write('No hotels found meeting all advanced criteria.'), nl, fail.
+           [Hotel, HotelStarRating, Price, Rating, Distance]), nl,
+    fail.
+recommend_advanced(_, _, _, _, _, _) :-
+    write('End of recommendations.'), nl.
 
 % Hotel Categories
 % category(Hotel, Category).
@@ -150,12 +150,12 @@ category('Hotel View Inn', mid_range).
 
 % Rule for filtering hotels by category.
 % Input: Category, Output: Hotel
-recommend_by_category(Category, Hotel) :-
+recommend_by_category(Category) :-
     category(Hotel, Category),
-    format('Hotel in Category ~w: ~w', [Category, Hotel]),
-    !.
+    format('Hotel in Category ~w: ~w', [Category, Hotel]), nl,
+    fail.
 recommend_by_category(_) :-
-    write('No hotels found for the specified category.'), nl, fail.
+    !, write('End of recommendations.'), nl.
 
 % Amenities Scoring System
 % Score hotels based on the number of amenities provided.
@@ -210,26 +210,25 @@ book_room(Hotel) :-
 dynamic_price(Hotel, Season, AdjustedPrice) :-
     seasonal_price(Hotel, Season, BasePrice),
     room_availability(Hotel, Rooms),
-    (Rooms < 5 -> AdjustedPrice is BasePrice * 1.5 ; AdjustedPrice is BasePrice),
-    format('The dynamic price for ~w in ~w season is $~2f.', [Hotel, Season, AdjustedPrice]),
-    !.
-dynamic_price(Hotel, Season, _) :-
-    \+ seasonal_price(Hotel, Season, _),
-    format('No seasonal price information available for ~w in ~w season.', [Hotel, Season]), nl, fail.
+    (Rooms >= 10 -> AdjustedPrice = BasePrice ;
+     Rooms >= 5  -> AdjustedPrice is BasePrice * 1.2 ;
+     Rooms >= 2  -> AdjustedPrice is BasePrice * 1.5 ;
+     AdjustedPrice is BasePrice * 2),
+    format('Dynamic Price for ~w in ~w season: $~2f', [Hotel, Season, AdjustedPrice]).
 
 
 % Sample Queries
-% ?- recommend_hotel(3, 100, [wifi, breakfast], 'Skopje', Hotel).
+% ? - recommend_all_hotels(3, 150, [wifi, breakfast], 'Skopje').
 
-% ?- recommend_hotel_with_rating(4, 150, [gym, breakfast], 'Tetovo', 4.0, Hotel).
+% ?- recommend_hotel_with_rating(4, 150, [gym, breakfast], 'Tetovo', 4.0).
 
-% ?- recommend_hotel_seasonal(4, winter, 130, [wifi, breakfast], 'Skopje', Hotel).
+% ?- recommend_hotel_seasonal(4, winter, 130, [wifi, breakfast], 'Skopje').
 
-% ?- recommend_hotel_by_distance(2, Hotel).
+% ?- recommend_hotel_by_distance(2).
 
-% ?- recommend_advanced(4, 200, [wifi, breakfast], 'Tetovo', 4.0, 10, Hotel).
+% ?- recommend_advanced(4, 200, [wifi, breakfast], 'Tetovo', 4.0, 10).
 
-% ?- recommend_by_category(luxury, Hotel).
+% ?- recommend_by_category(luxury).
 
 % ?- amenities_score('Hotel Alexandar Square', Score).
 
